@@ -1,0 +1,22 @@
+[
+  {"name":"Abobora cabotian com carne seca desfiada inteiro","code":"349602","category":"ESPECIAL INVERNO","price":39.9},
+  {"name":"Absolut","code":"349796","category":"Shots","price":24.9},
+  {"name":"Agua com Gas","code":"349594","category":"Aguas Bebidas nao alcoolicas","price":5.9},
+  {"name":"Batata frita inteiro","code":"349597","category":"Petiscos","price":49.9},
+  {"name":"Budweiser","code":"349588","category":"Cervejas","price":14.9},
+  {"name":"Caipirinha","code":"349793","category":"Caipirinha","price":23.9},
+  {"name":"Coca-Cola","code":"349592","category":"Refrigerantes","price":6.9},
+  {"name":"Ceviche inteiro","code":"349597","category":"Petiscos","price":62.6},
+  {"name":"Chapa de picanha","code":"349600","category":"Chapas","price":149.9},
+  {"name":"Corona","code":"349588","category":"Cervejas","price":18.9},
+  {"name":"Feijoada Individual","code":"349856","category":"Feijoada","price":32.9},
+  {"name":"Gin Tonica","code":"349781","category":"Gin Drinks e Combo","price":23.9},
+  {"name":"Jack Daniels","code":"349796","category":"Shots","price":24.9},
+  {"name":"Lanche de Cupim inteiro","code":"349598","category":"Lanches","price":39.5},
+  {"name":"Mojito","code":"349593","category":"Drinks Botequim","price":25.9},
+  {"name":"Parmegiana de FILE MIGNON inteiro","code":"349853","category":"Pratos","price":69.9},
+  {"name":"Pizza 3 queijos inteiro","code":"349599","category":"Pizzas","price":59.9},
+  {"name":"Red Label","code":"349799","category":"Garrafa","price":230.9},
+  {"name":"Risoto de camarao inteiro","code":"349854","category":"Risotos","price":69.9},
+  {"name":"X-Salada inteiro","code":"349598","category":"Lanches","price":29.9}
+]
