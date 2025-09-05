@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Almoxarifado - LAJES TAMOYO</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Login Screen -->
+        <div id="login-screen" class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="logo">
+                        <i class="fas fa-warehouse"></i>
+                        <h1>Sistema de Almoxarifado</h1>
+                    </div>
+                    <p>LAJES TAMOYO</p>
+                </div>
+                
+                <form id="login-form" class="login-form">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <div class="input-container">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="senha">Senha</label>
+                        <div class="input-container">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="senha" name="senha" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword()">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Entrar
+                    </button>
+                </form>
+                
+                <div class="login-footer">
+                    <p>Master Vital Soluções</p>
+                    <p>Contato: (14) 99632-3874</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Application -->
+        <div id="main-app" class="main-app" style="display: none;">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="app-title">
+                        <i class="fas fa-warehouse"></i>
+                        Sistema de Almoxarifado
+                    </h1>
+                </div>
+                
+                <div class="header-right">
+                    <div class="user-info">
+                        <span id="user-name">Usuário</span>
+                        <div class="user-menu">
+                            <button class="user-avatar" onclick="toggleUserMenu()">
+                                <i class="fas fa-user"></i>
+                            </button>
+                            <div class="user-dropdown" id="user-dropdown">
+                                <a href="#" onclick="changePassword()">
+                                    <i class="fas fa-key"></i>
+                                    Alterar Senha
+                                </a>
+                                <a href="#" onclick="logout()">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Sair
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Sidebar -->
+            <aside class="sidebar" id="sidebar">
+                <nav class="sidebar-nav">
+                    <div class="nav-section">
+                        <h3>Cadastros</h3>
+                        <ul>
+                            <li><a href="#" onclick="showModule('produtos')" class="nav-link active">
+                                <i class="fas fa-box"></i>
+                                Produtos
+                            </a></li>
+                            <li><a href="#" onclick="showModule('fornecedores')" class="nav-link">
+                                <i class="fas fa-truck"></i>
+                                Fornecedores
+                            </a></li>
+                            <li><a href="#" onclick="showModule('colaboradores')" class="nav-link">
+                                <i class="fas fa-users"></i>
+                                Colaboradores
+                            </a></li>
+                            <li><a href="#" onclick="showModule('locais')" class="nav-link">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Locais de Estoque
+                            </a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="nav-section">
+                        <h3>Estoque</h3>
+                        <ul>
+                            <li><a href="#" onclick="showModule('movimentacoes')" class="nav-link">
+                                <i class="fas fa-exchange-alt"></i>
+                                Movimentações
+                            </a></li>
+                            <li><a href="#" onclick="showModule('transferencias')" class="nav-link">
+                                <i class="fas fa-arrows-alt"></i>
+                                Transferências
+                            </a></li>
+                            <li><a href="#" onclick="showModule('emprestimos')" class="nav-link">
+                                <i class="fas fa-hand-holding"></i>
+                                Empréstimos
+                            </a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="nav-section">
+                        <h3>Relatórios</h3>
+                        <ul>
+                            <li><a href="#" onclick="showModule('relatorios')" class="nav-link">
+                                <i class="fas fa-chart-bar"></i>
+                                Relatórios
+                            </a></li>
+                            <li><a href="#" onclick="showModule('dashboard')" class="nav-link">
+                                <i class="fas fa-tachometer-alt"></i>
+                                Dashboard
+                            </a></li>
+                        </ul>
+                    </div>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <div id="content-area">
+                    <!-- Produtos Module -->
+                    <div id="produtos-module" class="module-content">
+                        <div class="module-header">
+                            <h2>Gestão de Produtos</h2>
+                            <button class="btn btn-primary" onclick="openProductModal()">
+                                <i class="fas fa-plus"></i>
+                                Novo Produto
+                            </button>
+                        </div>
+                        
+                        <div class="filters-card">
+                            <div class="filter-group">
+                                <label>Buscar</label>
+                                <input type="text" id="product-search" placeholder="Código ou descrição..." onkeyup="filterProducts()">
+                            </div>
+                            <div class="filter-group">
+                                <label>Grupo</label>
+                                <select id="group-filter" onchange="filterProducts()">
+                                    <option value="">Todos os grupos</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>Status</label>
+                                <select id="status-filter" onchange="filterProducts()">
+                                    <option value="">Todos</option>
+                                    <option value="true">Ativos</option>
+                                    <option value="false">Inativos</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="table-card">
+                            <div class="table-container">
+                                <table id="products-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Código</th>
+                                            <th>Descrição</th>
+                                            <th>Unidade</th>
+                                            <th>Grupo</th>
+                                            <th>Estoque Atual</th>
+                                            <th>Mínimo</th>
+                                            <th>Máximo</th>
+                                            <th>Status</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="products-tbody">
+                                        <!-- Products will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Other modules will be added here -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Novo Produto</h3>
+                <button class="close-btn" onclick="closeProductModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="product-form" class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="prod-codigo">Código *</label>
+                        <input type="text" id="prod-codigo" name="codigo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="prod-unidade">Unidade</label>
+                        <input type="text" id="prod-unidade" name="unidade" placeholder="Ex: UN, KG, L">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="prod-descricao">Descrição *</label>
+                    <input type="text" id="prod-descricao" name="descricao" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="prod-grupo">Grupo</label>
+                        <select id="prod-grupo" name="grupo_id">
+                            <option value="">Selecione um grupo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="prod-ativo">Status</label>
+                        <select id="prod-ativo" name="ativo">
+                            <option value="1">Ativo</option>
+                            <option value="0">Inativo</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="prod-minimo">Estoque Mínimo</label>
+                        <input type="number" id="prod-minimo" name="estoque_minimo" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="prod-maximo">Estoque Máximo</label>
+                        <input type="number" id="prod-maximo" name="estoque_maximo" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="prod-requisitado">Estoque Requisitado</label>
+                        <input type="number" id="prod-requisitado" name="estoque_requisitado" min="0" value="0">
+                    </div>
+                </div>
+            </form>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeProductModal()">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" onclick="saveProduct()">
+                    Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Carregando...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>

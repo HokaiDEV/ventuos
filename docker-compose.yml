@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: almoxarifado_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: almoxarifado
+      MYSQL_USER: almoxarifado
+      MYSQL_PASSWORD: almoxarifado123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - almoxarifado_network
+
+  backend:
+    build: ./backend
+    container_name: almoxarifado_backend
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      DB_HOST: mysql
+      DB_USER: almoxarifado
+      DB_PASSWORD: almoxarifado123
+      DB_NAME: almoxarifado
+      JWT_SECRET: your_jwt_secret_key_here
+    depends_on:
+      - mysql
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - almoxarifado_network
+
+  frontend:
+    build: ./frontend
+    container_name: almoxarifado_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+    networks:
+      - almoxarifado_network
+
+volumes:
+  mysql_data:
+
+networks:
+  almoxarifado_network:
+    driver: bridge
