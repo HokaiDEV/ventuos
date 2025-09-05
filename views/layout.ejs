@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title || 'Sistema de Almoxarifado' %> - LAJES TAMOYO</title>
+    
+    <!-- Preload fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="/css/neumorphic.css">
+    
+    <!-- Meta tags -->
+    <meta name="description" content="Sistema de Almoxarifado para controle de produtos, estoque, transferências e empréstimos - LAJES TAMOYO">
+    <meta name="keywords" content="almoxarifado, estoque, produtos, inventário, transferências, empréstimos">
+    <meta name="author" content="Master Vital Soluções - Iann Arruda Saçaki">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    
+    <!-- PWA Meta -->
+    <meta name="theme-color" content="#e0e0e0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    
+    <style>
+        /* Page-specific loading animation */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease-out;
+        }
+        
+        .page-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loader-content {
+            text-align: center;
+        }
+        
+        .loader-logo {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .loader-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--bg-darker);
+            border-radius: 50%;
+            border-top-color: var(--accent-primary);
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto var(--space-md);
+        }
+        
+        .loader-text {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-content">
+            <div class="loader-logo">📦 ALMOXARIFADO</div>
+            <div class="loader-spinner"></div>
+            <div class="loader-text">Carregando sistema...</div>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="app-layout" style="min-height: 100vh;">
+        <% if (typeof user !== 'undefined' && user) { %>
+            <!-- Header -->
+            <header class="neu-header">
+                <div class="neu-container" style="padding: 0;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <!-- Logo and Title -->
+                        <div style="display: flex; align-items: center; gap: var(--space-lg);">
+                            <a href="/dashboard" class="neu-logo">📦 ALMOXARIFADO</a>
+                            <div style="color: var(--text-secondary); font-size: var(--font-size-sm);">
+                                LAJES TAMOYO
+                            </div>
+                        </div>
+                        
+                        <!-- User Info and Actions -->
+                        <div style="display: flex; align-items: center; gap: var(--space-md);">
+                            <!-- Notifications -->
+                            <button class="neu-btn neu-btn-sm" data-tooltip="Notificações" onclick="toggleNotifications()">
+                                🔔
+                                <span class="notification-badge neu-badge neu-badge-danger" style="display: none; margin-left: var(--space-xs); font-size: 10px; padding: 2px 6px;">0</span>
+                            </button>
+                            
+                            <!-- User Menu -->
+                            <div class="user-menu" style="position: relative;">
+                                <button class="neu-btn neu-btn-sm" onclick="toggleUserMenu()" data-tooltip="Menu do usuário">
+                                    👤 <%= user.nome.split(' ')[0] %>
+                                </button>
+                                <div class="user-dropdown neu-card" id="userDropdown" style="
+                                    position: absolute;
+                                    top: 100%;
+                                    right: 0;
+                                    margin-top: var(--space-sm);
+                                    min-width: 200px;
+                                    display: none;
+                                    z-index: 1000;
+                                ">
+                                    <div style="padding: var(--space-sm);">
+                                        <div style="color: var(--text-secondary); font-size: var(--font-size-xs); margin-bottom: var(--space-sm);">
+                                            <%= user.email %>
+                                        </div>
+                                        <div style="margin-bottom: var(--space-sm);">
+                                            <span class="neu-badge neu-badge-info"><%= user.perfil %></span>
+                                        </div>
+                                        <hr style="border: none; height: 1px; background: var(--bg-darker); margin: var(--space-sm) 0;">
+                                        <a href="/perfil" class="neu-btn neu-btn-sm" style="width: 100%; margin-bottom: var(--space-xs);">
+                                            ⚙️ Meu Perfil
+                                        </a>
+                                        <a href="/logout" class="neu-btn neu-btn-sm neu-btn-danger" style="width: 100%;">
+                                            🚪 Sair
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Container -->
+            <div class="neu-container" style="display: flex; gap: var(--space-lg); margin-top: var(--space-lg);">
+                <!-- Sidebar Navigation -->
+                <aside class="neu-sidebar" style="min-width: 250px;">
+                    <nav class="neu-nav">
+                        <a href="/dashboard" class="neu-nav-item">
+                            📊 Dashboard
+                        </a>
+                        <a href="/produtos" class="neu-nav-item">
+                            📦 Produtos
+                        </a>
+                        <a href="/estoque" class="neu-nav-item">
+                            📋 Estoque
+                        </a>
+                        <a href="/transferencias" class="neu-nav-item">
+                            🔄 Transferências
+                        </a>
+                        <a href="/emprestimos" class="neu-nav-item">
+                            🤝 Empréstimos
+                        </a>
+                        <a href="/relatorios" class="neu-nav-item">
+                            📈 Relatórios
+                        </a>
+                        
+                        <% if (user.perfil === 'admin') { %>
+                        <hr style="border: none; height: 1px; background: var(--bg-darker); margin: var(--space-md) 0;">
+                        <div style="color: var(--text-muted); font-size: var(--font-size-xs); padding: 0 var(--space-lg); margin-bottom: var(--space-sm); text-transform: uppercase; letter-spacing: 0.5px;">
+                            Administração
+                        </div>
+                        <a href="/usuarios" class="neu-nav-item">
+                            👥 Usuários
+                        </a>
+                        <a href="/configuracoes" class="neu-nav-item">
+                            ⚙️ Configurações
+                        </a>
+                        <a href="/auditoria" class="neu-nav-item">
+                            🔍 Auditoria
+                        </a>
+                        <% } %>
+                    </nav>
+                    
+                    <!-- Quick Stats -->
+                    <div class="neu-card-flat" style="margin-top: var(--space-lg);">
+                        <h4 style="color: var(--text-secondary); margin-bottom: var(--space-md); font-size: var(--font-size-sm);">
+                            Status Rápido
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: var(--font-size-xs); color: var(--text-muted);">Produtos Ativos</span>
+                                <span class="neu-badge neu-badge-info" data-stat="produtos">-</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: var(--font-size-xs); color: var(--text-muted);">Estoque Baixo</span>
+                                <span class="neu-badge neu-badge-warning" data-stat="estoquesBaixos">-</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: var(--font-size-xs); color: var(--text-muted);">Empréstimos</span>
+                                <span class="neu-badge neu-badge-success" data-stat="emprestimosAbertos">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Main Content -->
+                <main style="flex: 1; min-width: 0;">
+                    <%- body %>
+                </main>
+            </div>
+        <% } else { %>
+            <!-- Login Layout -->
+            <main>
+                <%- body %>
+            </main>
+        <% } %>
+    </div>
+
+    <!-- Footer -->
+    <footer style="margin-top: var(--space-2xl); padding: var(--space-lg); text-align: center; color: var(--text-muted); font-size: var(--font-size-xs);">
+        <div class="neu-container">
+            <div style="margin-bottom: var(--space-sm);">
+                Sistema de Almoxarifado © 2024 LAJES TAMOYO
+            </div>
+            <div>
+                Desenvolvido por <strong>Master Vital Soluções</strong> - Iann Arruda Saçaki
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="/js/main.js"></script>
+    
+    <!-- Additional page-specific scripts -->
+    <% if (typeof scripts !== 'undefined') { %>
+        <% scripts.forEach(script => { %>
+            <script src="<%= script %>"></script>
+        <% }) %>
+    <% } %>
+
+    <script>
+        // Hide page loader when content is ready
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('pageLoader');
+            if (loader) {
+                loader.classList.add('hidden');
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 300);
+            }
+        });
+
+        // User menu toggle
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            if (dropdown) {
+                dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+            }
+        }
+
+        // Close user menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const userMenu = document.querySelector('.user-menu');
+            const dropdown = document.getElementById('userDropdown');
+            if (userMenu && dropdown && !userMenu.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        // Notifications toggle
+        function toggleNotifications() {
+            // Implementation for notifications panel
+            window.almoxarifadoApp.showAlert('Funcionalidade de notificações em desenvolvimento', 'info');
+        }
+
+        // Update quick stats
+        <% if (typeof user !== 'undefined' && user) { %>
+        fetch('/api/dashboard/quick-stats')
+            .then(response => response.json())
+            .then(data => {
+                Object.keys(data).forEach(key => {
+                    const element = document.querySelector(`[data-stat="${key}"]`);
+                    if (element) {
+                        element.textContent = data[key] || '0';
+                    }
+                });
+            })
+            .catch(error => console.error('Erro ao carregar estatísticas rápidas:', error));
+        <% } %>
+    </script>
+</body>
+</html>

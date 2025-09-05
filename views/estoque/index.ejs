@@ -1,0 +1,281 @@
+<!-- Stock Management Page -->
+<div class="estoque-container">
+    <!-- Page Header -->
+    <div class="neu-header" style="margin-bottom: var(--space-xl);">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <h1 style="font-size: var(--font-size-3xl); font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-sm);">
+                    📊 Controle de Estoque
+                </h1>
+                <p style="color: var(--text-secondary); font-size: var(--font-size-base);">
+                    Monitoramento e controle de estoque por produto
+                </p>
+            </div>
+            <div style="display: flex; gap: var(--space-md);">
+                <a href="/estoque/entrada" class="neu-btn neu-btn-success">
+                    📦 Nova Entrada
+                </a>
+                <a href="/estoque/saida" class="neu-btn neu-btn-warning">
+                    📤 Nova Saída
+                </a>
+                <button class="neu-btn" onclick="exportTable('estoqueTable', 'estoque.csv')">
+                    📊 Exportar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid-4" style="margin-bottom: var(--space-2xl);">
+        <div class="neu-stat-card">
+            <div class="neu-stat-number text-primary">
+                <%= produtos.length %>
+            </div>
+            <div class="neu-stat-label">Total de Produtos</div>
+        </div>
+        
+        <div class="neu-stat-card">
+            <div class="neu-stat-number text-warning">
+                <%= produtos.filter(p => p.status_estoque === 'Baixo').length %>
+            </div>
+            <div class="neu-stat-label">Estoque Baixo</div>
+        </div>
+        
+        <div class="neu-stat-card">
+            <div class="neu-stat-number text-danger">
+                <%= produtos.filter(p => p.estoque_atual === 0).length %>
+            </div>
+            <div class="neu-stat-label">Estoque Zerado</div>
+        </div>
+        
+        <div class="neu-stat-card">
+            <div class="neu-stat-number text-info">
+                <%= produtos.reduce((sum, p) => sum + p.estoque_atual, 0) %>
+            </div>
+            <div class="neu-stat-label">Total em Estoque</div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="neu-card" style="margin-bottom: var(--space-xl);">
+        <form method="GET" action="/estoque" style="display: flex; gap: var(--space-md); align-items: end; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 200px;">
+                <label class="form-label">Buscar</label>
+                <input 
+                    type="text" 
+                    name="search" 
+                    class="neu-input" 
+                    placeholder="Código ou descrição..."
+                    value="<%= filters.search || '' %>"
+                >
+            </div>
+            
+            <div style="min-width: 150px;">
+                <label class="form-label">Filtro</label>
+                <select name="filtro" class="neu-select">
+                    <option value="">Todos os produtos</option>
+                    <option value="baixo" <%= filters.filtro === 'baixo' ? 'selected' : '' %>>Estoque baixo</option>
+                    <option value="zerado" <%= filters.filtro === 'zerado' ? 'selected' : '' %>>Estoque zerado</option>
+                    <option value="alto" <%= filters.filtro === 'alto' ? 'selected' : '' %>>Estoque alto</option>
+                </select>
+            </div>
+            
+            <div style="min-width: 150px;">
+                <label class="form-label">Grupo</label>
+                <select name="grupo" class="neu-select">
+                    <option value="">Todos os grupos</option>
+                    <% grupos.forEach(grupo => { %>
+                        <option value="<%= grupo.id %>" <%= filters.grupo == grupo.id ? 'selected' : '' %>>
+                            <%= grupo.nome %>
+                        </option>
+                    <% }) %>
+                </select>
+            </div>
+            
+            <div style="display: flex; gap: var(--space-sm);">
+                <button type="submit" class="neu-btn neu-btn-primary">
+                    🔍 Filtrar
+                </button>
+                <a href="/estoque" class="neu-btn">
+                    🗑️ Limpar
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Stock Table -->
+    <div class="neu-table-container">
+        <% if (produtos.length === 0) { %>
+            <div class="empty-state" style="text-align: center; padding: var(--space-2xl); color: var(--text-muted);">
+                <div style="font-size: var(--font-size-4xl); margin-bottom: var(--space-lg);">📊</div>
+                <h3 style="margin-bottom: var(--space-md);">Nenhum produto encontrado</h3>
+                <p style="margin-bottom: var(--space-lg);">
+                    <% if (filters.search || filters.grupo || filters.filtro) { %>
+                        Tente ajustar os filtros ou <a href="/estoque">limpar a busca</a>
+                    <% } else { %>
+                        Comece cadastrando produtos no sistema
+                    <% } %>
+                </p>
+                <a href="/produtos/novo" class="neu-btn neu-btn-primary">
+                    ➕ Cadastrar Produto
+                </a>
+            </div>
+        <% } else { %>
+            <table class="neu-table" id="estoqueTable">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Grupo</th>
+                        <th>Unidade</th>
+                        <th>Atual</th>
+                        <th>Mínimo</th>
+                        <th>Máximo</th>
+                        <th>Requisitado</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% produtos.forEach(produto => { %>
+                        <tr class="fade-in">
+                            <td>
+                                <div>
+                                    <strong><%= produto.codigo %></strong>
+                                    <div style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: var(--space-xs);">
+                                        <%= produto.descricao %>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <% if (produto.grupo_nome) { %>
+                                    <span class="neu-badge neu-badge-info">
+                                        <%= produto.grupo_nome %>
+                                    </span>
+                                <% } else { %>
+                                    <span style="color: var(--text-muted); font-size: var(--font-size-sm);">
+                                        Sem grupo
+                                    </span>
+                                <% } %>
+                            </td>
+                            <td>
+                                <span class="neu-badge">
+                                    <%= produto.unidade %>
+                                </span>
+                            </td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                                    <strong style="font-size: var(--font-size-lg);"><%= produto.estoque_atual %></strong>
+                                    <% if (produto.estoque_minimo > 0 && produto.estoque_atual <= produto.estoque_minimo) { %>
+                                        <span class="neu-badge neu-badge-warning" data-tooltip="Estoque baixo">⚠️</span>
+                                    <% } else if (produto.estoque_atual === 0) { %>
+                                        <span class="neu-badge neu-badge-danger" data-tooltip="Estoque zerado">🚫</span>
+                                    <% } %>
+                                </div>
+                            </td>
+                            <td>
+                                <%= produto.estoque_minimo %>
+                            </td>
+                            <td>
+                                <%= produto.estoque_maximo %>
+                            </td>
+                            <td>
+                                <% if (produto.estoque_requisitado > 0) { %>
+                                    <span class="text-warning"><%= produto.estoque_requisitado %></span>
+                                <% } else { %>
+                                    0
+                                <% } %>
+                            </td>
+                            <td>
+                                <% 
+                                let statusClass = 'neu-badge-info';
+                                let statusText = 'Normal';
+                                
+                                if (produto.estoque_atual === 0) {
+                                    statusClass = 'neu-badge-danger';
+                                    statusText = 'Zerado';
+                                } else if (produto.estoque_minimo > 0 && produto.estoque_atual <= produto.estoque_minimo) {
+                                    statusClass = 'neu-badge-warning';
+                                    statusText = 'Baixo';
+                                } else if (produto.estoque_maximo > 0 && produto.estoque_atual >= produto.estoque_maximo) {
+                                    statusClass = 'neu-badge-info';
+                                    statusText = 'Alto';
+                                }
+                                %>
+                                <span class="neu-badge <%= statusClass %>">
+                                    <%= statusText %>
+                                </span>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: var(--space-xs);">
+                                    <a href="/produtos/<%= produto.id %>" class="neu-btn neu-btn-sm" data-tooltip="Ver produto">
+                                        👁️
+                                    </a>
+                                    <a href="/estoque/entrada?produto=<%= produto.id %>" class="neu-btn neu-btn-sm neu-btn-success" data-tooltip="Entrada">
+                                        📦
+                                    </a>
+                                    <% if (produto.estoque_atual > 0) { %>
+                                        <a href="/estoque/saida?produto=<%= produto.id %>" class="neu-btn neu-btn-sm neu-btn-warning" data-tooltip="Saída">
+                                            📤
+                                        </a>
+                                    <% } %>
+                                    <a href="/transferencias/nova?produto=<%= produto.id %>" class="neu-btn neu-btn-sm" data-tooltip="Transferir">
+                                        🔄
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } %>
+    </div>
+</div>
+
+<style>
+    .form-label {
+        display: block;
+        color: var(--text-secondary);
+        font-weight: 500;
+        margin-bottom: var(--space-sm);
+        font-size: var(--font-size-sm);
+    }
+    
+    .empty-state h3 {
+        color: var(--text-primary);
+        font-weight: 600;
+    }
+    
+    .empty-state p {
+        color: var(--text-secondary);
+    }
+    
+    .empty-state a {
+        color: var(--accent-primary);
+        text-decoration: none;
+    }
+    
+    .empty-state a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<script>
+    // Auto-submit form on select change
+    document.querySelectorAll('select[name="filtro"], select[name="grupo"]').forEach(select => {
+        select.addEventListener('change', function() {
+            this.form.submit();
+        });
+    });
+
+    // Live search with debounce
+    let searchTimeout;
+    const searchInput = document.querySelector('input[name="search"]');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                this.form.submit();
+            }, 500);
+        });
+    }
+</script>

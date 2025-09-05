@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Sistema de Almoxarifado - LAJES TAMOYO</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="/css/neumorphic.css">
+    
+    <style>
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-primary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(74, 144, 226, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(92, 184, 92, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(240, 173, 78, 0.1) 0%, transparent 50%);
+        }
+        
+        .login-card {
+            background: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+            box-shadow: 
+                20px 20px 40px var(--shadow-dark),
+                -20px -20px 40px var(--shadow-light);
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            z-index: 1;
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: var(--space-2xl);
+        }
+        
+        .login-logo {
+            font-size: var(--font-size-4xl);
+            margin-bottom: var(--space-md);
+        }
+        
+        .login-title {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .login-subtitle {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .company-name {
+            color: var(--accent-primary);
+            font-weight: 600;
+            font-size: var(--font-size-lg);
+        }
+        
+        .form-group {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .form-label {
+            display: block;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: var(--space-sm);
+            font-size: var(--font-size-sm);
+        }
+        
+        .form-input {
+            background: var(--bg-primary);
+            border: none;
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            font-size: var(--font-size-base);
+            color: var(--text-primary);
+            box-shadow: 
+                inset 6px 6px 12px var(--shadow-inset-dark),
+                inset -6px -6px 12px var(--shadow-inset-light);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            box-shadow: 
+                inset 8px 8px 16px var(--shadow-inset-dark),
+                inset -8px -8px 16px var(--shadow-inset-light),
+                0 0 0 2px rgba(74, 144, 226, 0.3);
+        }
+        
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: var(--space-lg);
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            margin-top: var(--space-lg);
+        }
+        
+        .login-footer {
+            text-align: center;
+            margin-top: var(--space-2xl);
+            padding-top: var(--space-lg);
+            border-top: 1px solid var(--bg-darker);
+        }
+        
+        .login-footer-text {
+            color: var(--text-muted);
+            font-size: var(--font-size-xs);
+            line-height: 1.5;
+        }
+        
+        .alert {
+            margin-bottom: var(--space-lg);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-sm);
+        }
+        
+        .alert-error {
+            background: linear-gradient(145deg, #fdf2f2, #f8e8e8);
+            color: var(--accent-danger);
+            border-left: 4px solid var(--accent-danger);
+            box-shadow: 
+                inset 2px 2px 4px rgba(217, 83, 79, 0.1),
+                inset -2px -2px 4px rgba(255, 255, 255, 0.1);
+        }
+        
+        .alert-success {
+            background: linear-gradient(145deg, #f0f9f0, #e8f5e8);
+            color: var(--accent-success);
+            border-left: 4px solid var(--accent-success);
+            box-shadow: 
+                inset 2px 2px 4px rgba(92, 184, 92, 0.1),
+                inset -2px -2px 4px rgba(255, 255, 255, 0.1);
+        }
+        
+        .password-toggle {
+            position: relative;
+        }
+        
+        .password-toggle-btn {
+            position: absolute;
+            right: var(--space-md);
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: var(--font-size-lg);
+            padding: var(--space-xs);
+            border-radius: var(--radius-sm);
+            transition: color 0.3s ease;
+        }
+        
+        .password-toggle-btn:hover {
+            color: var(--text-primary);
+        }
+        
+        .demo-credentials {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: var(--space-md);
+            margin-top: var(--space-lg);
+            box-shadow: 
+                inset 2px 2px 4px var(--shadow-inset-dark),
+                inset -2px -2px 4px var(--shadow-inset-light);
+        }
+        
+        .demo-title {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: var(--font-size-xs);
+            margin-bottom: var(--space-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .demo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xs);
+            font-size: var(--font-size-xs);
+        }
+        
+        .demo-label {
+            color: var(--text-muted);
+        }
+        
+        .demo-value {
+            color: var(--text-primary);
+            font-family: monospace;
+            background: var(--bg-primary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .demo-value:hover {
+            background: var(--bg-darker);
+        }
+        
+        @media (max-width: 768px) {
+            .login-card {
+                margin: var(--space-lg);
+                padding: var(--space-xl);
+            }
+            
+            .login-logo {
+                font-size: var(--font-size-3xl);
+            }
+            
+            .login-title {
+                font-size: var(--font-size-xl);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-background"></div>
+        
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-logo">📦</div>
+                <h1 class="login-title">ALMOXARIFADO</h1>
+                <p class="login-subtitle">Sistema de Controle de Estoque</p>
+                <div class="company-name">LAJES TAMOYO</div>
+            </div>
+            
+            <!-- Alerts -->
+            <% if (error && error.length > 0) { %>
+                <div class="alert alert-error">
+                    <%= error %>
+                </div>
+            <% } %>
+            
+            <% if (success && success.length > 0) { %>
+                <div class="alert alert-success">
+                    <%= success %>
+                </div>
+            <% } %>
+            
+            <!-- Login Form -->
+            <form method="POST" action="/login" id="loginForm">
+                <div class="form-group">
+                    <label for="email" class="form-label">Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        class="form-input"
+                        placeholder="seu.email@lajestamoyo.com"
+                        required
+                        autocomplete="username"
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">Senha</label>
+                    <div class="password-toggle">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="form-input"
+                            placeholder="Digite sua senha"
+                            required
+                            autocomplete="current-password"
+                        >
+                        <button type="button" class="password-toggle-btn" onclick="togglePassword()">
+                            👁️
+                        </button>
+                    </div>
+                </div>
+                
+                <button type="submit" class="neu-btn neu-btn-primary login-btn">
+                    🔐 Entrar no Sistema
+                </button>
+            </form>
+            
+            <!-- Demo Credentials -->
+            <div class="demo-credentials">
+                <div class="demo-title">Credenciais de Demonstração</div>
+                <div class="demo-item">
+                    <span class="demo-label">Email:</span>
+                    <span class="demo-value" onclick="fillDemo('email', 'admin@lajestamoyo.com')" data-tooltip="Clique para preencher">
+                        admin@lajestamoyo.com
+                    </span>
+                </div>
+                <div class="demo-item">
+                    <span class="demo-label">Senha:</span>
+                    <span class="demo-value" onclick="fillDemo('password', 'admin123')" data-tooltip="Clique para preencher">
+                        admin123
+                    </span>
+                </div>
+            </div>
+            
+            <div class="login-footer">
+                <div class="login-footer-text">
+                    Sistema desenvolvido por<br>
+                    <strong>Master Vital Soluções</strong><br>
+                    Iann Arruda Saçaki - (14) 99632-3874
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Password toggle functionality
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleBtn = document.querySelector('.password-toggle-btn');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleBtn.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleBtn.textContent = '👁️';
+            }
+        }
+        
+        // Fill demo credentials
+        function fillDemo(fieldId, value) {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.value = value;
+                field.focus();
+                
+                // Add a subtle animation
+                field.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    field.style.transform = '';
+                }, 150);
+            }
+        }
+        
+        // Form submission handling
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('[type="submit"]');
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            
+            // Basic validation
+            if (!email || !password) {
+                e.preventDefault();
+                showAlert('Por favor, preencha todos os campos.', 'error');
+                return;
+            }
+            
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                e.preventDefault();
+                showAlert('Por favor, insira um email válido.', 'error');
+                return;
+            }
+            
+            // Set loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="neu-loading"></span> Entrando...';
+        });
+        
+        // Show alert function
+        function showAlert(message, type) {
+            // Remove existing alerts
+            const existingAlerts = document.querySelectorAll('.alert');
+            existingAlerts.forEach(alert => alert.remove());
+            
+            // Create new alert
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} fade-in`;
+            alert.textContent = message;
+            
+            // Insert after header
+            const header = document.querySelector('.login-header');
+            header.insertAdjacentElement('afterend', alert);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+        
+        // Auto-focus first empty field
+        window.addEventListener('load', () => {
+            const emailField = document.getElementById('email');
+            const passwordField = document.getElementById('password');
+            
+            if (!emailField.value) {
+                emailField.focus();
+            } else if (!passwordField.value) {
+                passwordField.focus();
+            }
+        });
+        
+        // Enter key handling for demo credentials
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                // Ctrl+Enter fills demo credentials
+                fillDemo('email', 'admin@lajestamoyo.com');
+                setTimeout(() => fillDemo('password', 'admin123'), 100);
+            }
+        });
+        
+        // Simple tooltip implementation for demo credentials
+        document.querySelectorAll('[data-tooltip]').forEach(element => {
+            element.addEventListener('mouseenter', function() {
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.textContent = this.getAttribute('data-tooltip');
+                tooltip.style.cssText = `
+                    position: absolute;
+                    background: var(--bg-primary);
+                    color: var(--text-primary);
+                    padding: var(--space-xs) var(--space-sm);
+                    border-radius: var(--radius-sm);
+                    font-size: var(--font-size-xs);
+                    box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
+                    z-index: 1000;
+                    pointer-events: none;
+                    white-space: nowrap;
+                    bottom: 100%;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    margin-bottom: 4px;
+                `;
+                
+                this.style.position = 'relative';
+                this.appendChild(tooltip);
+            });
+            
+            element.addEventListener('mouseleave', function() {
+                const tooltip = this.querySelector('.tooltip');
+                if (tooltip) {
+                    tooltip.remove();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
