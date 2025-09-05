@@ -1,0 +1,154 @@
+/*
+  Neumorphic design system — monochromatic, soft dual shadows, minimal depth
+  Base color palette defaults to light gray #e0e0e0; dark mode derived subtly.
+*/
+
+:root {
+  --surface: #e0e0e0;
+  --text: #2d2d2d;
+  --muted-text: #5a5a5a;
+  --primary: #6f86d6; /* soft accent for CTA */
+
+  --radius: 14px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  --shadow-light: rgba(255, 255, 255, 0.9);
+  --shadow-dark: rgba(0, 0, 0, 0.18);
+
+  --elev-1: 6px;
+  --elev-2: 10px;
+  --elev-3: 16px;
+}
+
+html.dark {
+  --surface: #cfcfcf;
+  --text: #1e1e1e;
+  --muted-text: #3c3c3c;
+  --primary: #6f86d6;
+  --shadow-light: rgba(255, 255, 255, 0.85);
+  --shadow-dark: rgba(0, 0, 0, 0.25);
+}
+
+* { box-sizing: border-box; }
+html, body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.page { min-height: 100%; display: flex; flex-direction: column; }
+
+.container {
+  width: min(1120px, 100% - 2rem);
+  margin-inline: auto;
+}
+
+.header { padding: var(--space-8) var(--space-4) var(--space-6); text-align: center; }
+.header h1 { margin: 0 0 var(--space-2); font-weight: 600; letter-spacing: 0.2px; }
+.subtitle { margin: 0; color: var(--muted-text); }
+
+.theme-switch { margin-top: var(--space-4); display: inline-flex; align-items: center; gap: var(--space-2); }
+.switch { position: relative; width: 56px; height: 32px; display: inline-block; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute; inset: 0; border-radius: 999px; background: var(--surface);
+  box-shadow: var(--elev-1) var(--elev-1) calc(var(--elev-1) * 2) var(--shadow-dark),
+              calc(var(--elev-1) * -1) calc(var(--elev-1) * -1) calc(var(--elev-1) * 2) var(--shadow-light);
+}
+.slider::before {
+  content: ""; position: absolute; top: 6px; left: 6px; width: 20px; height: 20px; border-radius: 50%; background: var(--surface);
+  transition: transform 200ms ease;
+  box-shadow: var(--elev-1) var(--elev-1) calc(var(--elev-1) * 2) var(--shadow-dark),
+              calc(var(--elev-1) * -1) calc(var(--elev-1) * -1) calc(var(--elev-1) * 2) var(--shadow-light);
+}
+.switch input:checked + .slider::before { transform: translateX(24px); }
+.switch-label { color: var(--muted-text); font-size: 14px; }
+
+.grid { display: grid; gap: var(--space-6); padding: var(--space-6) var(--space-4) var(--space-8); grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+
+.card {
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: var(--space-6);
+  box-shadow: var(--elev-2) var(--elev-2) calc(var(--elev-2) * 2) var(--shadow-dark),
+              calc(var(--elev-2) * -1) calc(var(--elev-2) * -1) calc(var(--elev-2) * 2) var(--shadow-light);
+}
+.card h2 { margin: 0 0 var(--space-4); font-weight: 600; }
+
+.row { display: flex; align-items: center; }
+.column { display: flex; flex-direction: column; }
+.gap { gap: var(--space-4); }
+.end { justify-content: flex-end; }
+
+.btn {
+  appearance: none; border: none; border-radius: 14px; padding: 12px 16px; font-weight: 500; color: var(--text); background: var(--surface);
+  box-shadow: var(--elev-2) var(--elev-2) calc(var(--elev-2) * 2) var(--shadow-dark),
+              calc(var(--elev-2) * -1) calc(var(--elev-2) * -1) calc(var(--elev-2) * 2) var(--shadow-light);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn:hover { transform: translateY(-1px); }
+.btn:active {
+  transform: translateY(0);
+  box-shadow: inset var(--elev-2) var(--elev-2) calc(var(--elev-2) * 2) var(--shadow-dark),
+              inset calc(var(--elev-2) * -1) calc(var(--elev-2) * -1) calc(var(--elev-2) * 2) var(--shadow-light);
+}
+.btn:focus-visible { outline: 2px solid color-mix(in oklab, var(--primary) 45%, var(--surface)); outline-offset: 2px; }
+.btn-primary { color: white; background: color-mix(in oklab, var(--primary) 75%, var(--surface)); }
+.btn-primary:active {
+  box-shadow: inset var(--elev-2) var(--elev-2) calc(var(--elev-2) * 2) rgba(0,0,0,0.22),
+              inset calc(var(--elev-2) * -1) calc(var(--elev-2) * -1) calc(var(--elev-2) * 2) rgba(255,255,255,0.45);
+}
+.btn-icon { width: 44px; height: 44px; padding: 0; display: inline-grid; place-items: center; }
+.icon { font-size: 18px; }
+
+.field { display: grid; gap: 6px; }
+.label { font-size: 14px; color: var(--muted-text); }
+.input {
+  width: 100%; border: none; outline: none; border-radius: var(--radius);
+  padding: 12px 14px; font-size: 15px; background: var(--surface); color: var(--text);
+  box-shadow: inset var(--elev-1) var(--elev-1) calc(var(--elev-1) * 2) var(--shadow-dark),
+              inset calc(var(--elev-1) * -1) calc(var(--elev-1) * -1) calc(var(--elev-1) * 2) var(--shadow-light);
+  transition: box-shadow 120ms ease;
+}
+.input:focus-visible {
+  box-shadow: inset var(--elev-1) var(--elev-1) calc(var(--elev-1) * 2) var(--shadow-dark),
+              inset calc(var(--elev-1) * -1) calc(var(--elev-1) * -1) calc(var(--elev-1) * 2) var(--shadow-light),
+              0 0 0 3px color-mix(in oklab, var(--primary) 25%, transparent);
+}
+.select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, #9a9a9a 50%), linear-gradient(135deg, #9a9a9a 50%, transparent 50%); background-position: calc(100% - 18px) calc(1em + 2px), calc(100% - 13px) calc(1em + 2px); background-size: 6px 6px, 6px 6px; background-repeat: no-repeat; }
+
+.neumorphic-check { display: inline-flex; align-items: center; gap: 10px; user-select: none; cursor: pointer; }
+.neumorphic-check input { appearance: none; width: 22px; height: 22px; border-radius: 6px; background: var(--surface); display: grid; place-items: center; box-shadow: inset var(--elev-1) var(--elev-1) calc(var(--elev-1) * 2) var(--shadow-dark), inset calc(var(--elev-1) * -1) calc(var(--elev-1) * -1) calc(var(--elev-1) * 2) var(--shadow-light); }
+.neumorphic-check input:checked { box-shadow: var(--elev-2) var(--elev-2) calc(var(--elev-2) * 2) var(--shadow-dark), calc(var(--elev-2) * -1) calc(var(--elev-2) * -1) calc(var(--elev-2) * 2) var(--shadow-light) }
+.neumorphic-check input:checked::after { content: ""; width: 12px; height: 12px; border-radius: 3px; background: color-mix(in oklab, var(--primary) 75%, var(--surface)); box-shadow: inset var(--elev-1) var(--elev-1) calc(var(--elev-1) * 2) rgba(0,0,0,0.18), inset calc(var(--elev-1) * -1) calc(var(--elev-1) * -1) calc(var(--elev-1) * 2) rgba(255,255,255,0.8); }
+
+.cards { display: grid; gap: var(--space-4); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.panel { border-radius: var(--radius); padding: var(--space-4); background: var(--surface); box-shadow: var(--elev-1) var(--elev-1) calc(var(--elev-1) * 2) var(--shadow-dark), calc(var(--elev-1) * -1) calc(var(--elev-1) * -1) calc(var(--elev-1) * 2) var(--shadow-light); }
+.panel.pressed { box-shadow: inset var(--elev-1) var(--elev-1) calc(var(--elev-1) * 2) var(--shadow-dark), inset calc(var(--elev-1) * -1) calc(var(--elev-1) * -1) calc(var(--elev-1) * 2) var(--shadow-light); }
+.panel h3 { margin-top: 0; }
+.list { margin: 0; padding-left: 18px; color: var(--muted-text); }
+
+.toggle { position: relative; display: inline-flex; align-items: center; gap: 12px; cursor: pointer; user-select: none; }
+.toggle input { appearance: none; width: 56px; height: 32px; border-radius: 999px; background: var(--surface); box-shadow: inset var(--elev-1) var(--elev-1) calc(var(--elev-1) * 2) var(--shadow-dark), inset calc(var(--elev-1) * -1) calc(var(--elev-1) * -1) calc(var(--elev-1) * 2) var(--shadow-light); transition: background 200ms ease; }
+.toggle .thumb { position: absolute; left: 6px; width: 20px; height: 20px; border-radius: 50%; background: var(--surface); box-shadow: var(--elev-2) var(--elev-2) calc(var(--elev-2) * 2) var(--shadow-dark), calc(var(--elev-2) * -1) calc(var(--elev-2) * -1) calc(var(--elev-2) * 2) var(--shadow-light); transition: transform 200ms ease; }
+.toggle input:checked + .thumb { transform: translateX(24px); }
+.toggle-label { color: var(--muted-text); font-size: 14px; }
+
+.footer { padding: var(--space-6) var(--space-4) var(--space-8); text-align: center; color: var(--muted-text); }
+
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover { box-shadow: var(--elev-3) var(--elev-3) calc(var(--elev-3) * 2) var(--shadow-dark), calc(var(--elev-3) * -1) calc(var(--elev-3) * -1) calc(var(--elev-3) * 2) var(--shadow-light); }
+}
+

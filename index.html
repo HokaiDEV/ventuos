@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UI Neumórfica — Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="container header">
+      <h1>Neumorphism UI</h1>
+      <p class="subtitle">Superfície única, relevo suave, sem bordas duras</p>
+      <div class="theme-switch">
+        <label class="switch">
+          <input type="checkbox" id="darkToggle">
+          <span class="slider"></span>
+        </label>
+        <span class="switch-label">Modo escuro suave</span>
+      </div>
+    </header>
+
+    <main class="container grid">
+      <section class="card">
+        <h2>Botões</h2>
+        <div class="row gap">
+          <button class="btn">Padrão</button>
+          <button class="btn btn-primary">Primário</button>
+          <button class="btn btn-icon" aria-label="Favorito">
+            <span class="icon">★</span>
+          </button>
+          <button class="btn" disabled>Desabilitado</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Campos</h2>
+        <div class="column gap">
+          <label class="field">
+            <span class="label">Produto</span>
+            <input class="input" placeholder="Ex: Parafuso 3/16" />
+          </label>
+          <label class="field">
+            <span class="label">Quantidade</span>
+            <input class="input" type="number" value="10" />
+          </label>
+          <label class="field">
+            <span class="label">Local de estoque</span>
+            <select class="input select">
+              <option>ALM-01</option>
+              <option>ALM-02</option>
+              <option>DEP-EXP</option>
+            </select>
+          </label>
+          <label class="checkbox neumorphic-check">
+            <input type="checkbox" />
+            <span>Reserva imediata</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Cards e Lista</h2>
+        <div class="cards">
+          <article class="panel">
+            <h3>Estoque Atual</h3>
+            <p>Parafuso 3/16 — 240 un</p>
+            <p>Arruela M8 — 120 un</p>
+            <div class="row end">
+              <button class="btn btn-primary">Ver detalhes</button>
+            </div>
+          </article>
+          <article class="panel pressed">
+            <h3>Requisições</h3>
+            <ul class="list">
+              <li>REQ-1024 — João Silva — 8 un</li>
+              <li>REQ-1025 — Maria Souza — 16 un</li>
+              <li>REQ-1026 — Ana Lima — 4 un</li>
+            </ul>
+          </article>
+          <article class="panel">
+            <h3>Alertas</h3>
+            <p>Parafuso 1/4 — abaixo do mínimo</p>
+            <p>Disco de corte — ponto de reposição</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Toggle</h2>
+        <label class="toggle">
+          <input type="checkbox" />
+          <span class="thumb"></span>
+          <span class="toggle-label">Check-in rápido</span>
+        </label>
+      </section>
+    </main>
+
+    <footer class="container footer">
+      <small>UI de demonstração — Neumorfismo (monocromático)</small>
+    </footer>
+  </div>
+
+  <script>
+    const checkbox = document.getElementById('darkToggle');
+    checkbox?.addEventListener('change', (e) => {
+      document.documentElement.classList.toggle('dark', checkbox.checked);
+    });
+  </script>
+</body>
+</html>
+
