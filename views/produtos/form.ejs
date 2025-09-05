@@ -1,0 +1,356 @@
+<!-- Product Form Page -->
+<div class="produto-form-container">
+    <!-- Page Header -->
+    <div class="neu-header" style="margin-bottom: var(--space-xl);">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <h1 style="font-size: var(--font-size-3xl); font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-sm);">
+                    <%= produto ? '✏️ Editar Produto' : '➕ Novo Produto' %>
+                </h1>
+                <p style="color: var(--text-secondary); font-size: var(--font-size-base);">
+                    <%= produto ? `Editando: ${produto.descricao}` : 'Cadastrar novo produto no sistema' %>
+                </p>
+            </div>
+            <div>
+                <a href="/produtos" class="neu-btn">
+                    ← Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Form -->
+    <form method="POST" action="<%= produto ? `/produtos/${produto.id}?_method=PUT` : '/produtos' %>" id="productForm">
+        <% if (produto) { %>
+            <input type="hidden" name="_method" value="PUT">
+        <% } %>
+        
+        <div class="grid-2" style="align-items: start;">
+            <!-- Main Information -->
+            <div class="neu-card">
+                <h2 style="font-size: var(--font-size-xl); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-lg);">
+                    📋 Informações Básicas
+                </h2>
+                
+                <div class="form-group" style="margin-bottom: var(--space-lg);">
+                    <label for="codigo" class="form-label">
+                        Código do Produto *
+                    </label>
+                    <input 
+                        type="text" 
+                        id="codigo" 
+                        name="codigo" 
+                        class="neu-input"
+                        placeholder="Ex: FERR001"
+                        value="<%= produto ? produto.codigo : '' %>"
+                        required
+                        maxlength="50"
+                        style="text-transform: uppercase;"
+                    >
+                    <div style="font-size: var(--font-size-xs); color: var(--text-muted); margin-top: var(--space-xs);">
+                        Código único para identificação do produto
+                    </div>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: var(--space-lg);">
+                    <label for="descricao" class="form-label">
+                        Descrição do Produto *
+                    </label>
+                    <input 
+                        type="text" 
+                        id="descricao" 
+                        name="descricao" 
+                        class="neu-input"
+                        placeholder="Ex: Martelo de unha 500g"
+                        value="<%= produto ? produto.descricao : '' %>"
+                        required
+                        maxlength="255"
+                    >
+                </div>
+                
+                <div class="grid-2" style="margin-bottom: var(--space-lg);">
+                    <div class="form-group">
+                        <label for="unidade" class="form-label">
+                            Unidade de Medida
+                        </label>
+                        <select id="unidade" name="unidade" class="neu-select">
+                            <option value="UN" <%= (produto && produto.unidade === 'UN') || !produto ? 'selected' : '' %>>Unidade (UN)</option>
+                            <option value="KG" <%= produto && produto.unidade === 'KG' ? 'selected' : '' %>>Quilograma (KG)</option>
+                            <option value="G" <%= produto && produto.unidade === 'G' ? 'selected' : '' %>>Grama (G)</option>
+                            <option value="L" <%= produto && produto.unidade === 'L' ? 'selected' : '' %>>Litro (L)</option>
+                            <option value="ML" <%= produto && produto.unidade === 'ML' ? 'selected' : '' %>>Mililitro (ML)</option>
+                            <option value="M" <%= produto && produto.unidade === 'M' ? 'selected' : '' %>>Metro (M)</option>
+                            <option value="CM" <%= produto && produto.unidade === 'CM' ? 'selected' : '' %>>Centímetro (CM)</option>
+                            <option value="CX" <%= produto && produto.unidade === 'CX' ? 'selected' : '' %>>Caixa (CX)</option>
+                            <option value="PCT" <%= produto && produto.unidade === 'PCT' ? 'selected' : '' %>>Pacote (PCT)</option>
+                            <option value="PC" <%= produto && produto.unidade === 'PC' ? 'selected' : '' %>>Peça (PC)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="grupo_id" class="form-label">
+                            Grupo do Produto
+                        </label>
+                        <select id="grupo_id" name="grupo_id" class="neu-select">
+                            <option value="">Selecione um grupo</option>
+                            <% grupos.forEach(grupo => { %>
+                                <option value="<%= grupo.id %>" <%= produto && produto.grupo_id == grupo.id ? 'selected' : '' %>>
+                                    <%= grupo.nome %>
+                                </option>
+                            <% }) %>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: var(--space-lg);">
+                    <label for="codigo_barras" class="form-label">
+                        Código de Barras / QR Code
+                    </label>
+                    <input 
+                        type="text" 
+                        id="codigo_barras" 
+                        name="codigo_barras" 
+                        class="neu-input"
+                        placeholder="Ex: 7891234567890"
+                        value="<%= produto ? (produto.codigo_barras || '') : '' %>"
+                        maxlength="100"
+                    >
+                    <div style="font-size: var(--font-size-xs); color: var(--text-muted); margin-top: var(--space-xs);">
+                        Código de barras para leitura automática (opcional)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stock and Pricing -->
+            <div class="neu-card">
+                <h2 style="font-size: var(--font-size-xl); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-lg);">
+                    📊 Controle de Estoque
+                </h2>
+                
+                <div class="grid-2" style="margin-bottom: var(--space-lg);">
+                    <div class="form-group">
+                        <label for="estoque_minimo" class="form-label">
+                            Estoque Mínimo
+                        </label>
+                        <input 
+                            type="number" 
+                            id="estoque_minimo" 
+                            name="estoque_minimo" 
+                            class="neu-input"
+                            placeholder="0"
+                            value="<%= produto ? produto.estoque_minimo : '' %>"
+                            min="0"
+                            step="1"
+                        >
+                        <div style="font-size: var(--font-size-xs); color: var(--text-muted); margin-top: var(--space-xs);">
+                            Quantidade mínima para alerta
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="estoque_maximo" class="form-label">
+                            Estoque Máximo
+                        </label>
+                        <input 
+                            type="number" 
+                            id="estoque_maximo" 
+                            name="estoque_maximo" 
+                            class="neu-input"
+                            placeholder="0"
+                            value="<%= produto ? produto.estoque_maximo : '' %>"
+                            min="0"
+                            step="1"
+                        >
+                        <div style="font-size: var(--font-size-xs); color: var(--text-muted); margin-top: var(--space-xs);">
+                            Quantidade máxima recomendada
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: var(--space-lg);">
+                    <label for="preco_custo" class="form-label">
+                        Preço de Custo (R$)
+                    </label>
+                    <input 
+                        type="number" 
+                        id="preco_custo" 
+                        name="preco_custo" 
+                        class="neu-input"
+                        placeholder="0,00"
+                        value="<%= produto ? produto.preco_custo : '' %>"
+                        min="0"
+                        step="0.01"
+                        data-format="currency"
+                    >
+                    <div style="font-size: var(--font-size-xs); color: var(--text-muted); margin-top: var(--space-xs);">
+                        Custo unitário do produto (opcional)
+                    </div>
+                </div>
+                
+                <!-- Current Stock (only for edit) -->
+                <% if (produto) { %>
+                    <div class="neu-alert neu-alert-info" style="margin-bottom: var(--space-lg);">
+                        <div style="display: flex; align-items: center; gap: var(--space-md);">
+                            <div style="font-size: var(--font-size-2xl);">📦</div>
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: var(--space-xs);">
+                                    Estoque Atual: <%= produto.estoque_atual %> <%= produto.unidade %>
+                                </div>
+                                <div style="font-size: var(--font-size-sm);">
+                                    Para alterar o estoque, use as funcionalidades de entrada/saída
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+                
+                <!-- Quick Actions (only for edit) -->
+                <% if (produto) { %>
+                    <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+                        <a href="/estoque/entrada?produto=<%= produto.id %>" class="neu-btn neu-btn-sm neu-btn-success">
+                            📦 Entrada
+                        </a>
+                        <a href="/estoque/saida?produto=<%= produto.id %>" class="neu-btn neu-btn-sm neu-btn-warning">
+                            📤 Saída
+                        </a>
+                        <a href="/produtos/<%= produto.id %>" class="neu-btn neu-btn-sm">
+                            👁️ Ver Detalhes
+                        </a>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+        
+        <!-- Additional Information -->
+        <div class="neu-card" style="margin-top: var(--space-xl);">
+            <h2 style="font-size: var(--font-size-xl); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-lg);">
+                📝 Informações Adicionais
+            </h2>
+            
+            <div class="form-group">
+                <label for="observacoes" class="form-label">
+                    Observações
+                </label>
+                <textarea 
+                    id="observacoes" 
+                    name="observacoes" 
+                    class="neu-textarea"
+                    placeholder="Informações adicionais sobre o produto..."
+                    rows="4"
+                ><%= produto ? (produto.observacoes || '') : '' %></textarea>
+                <div style="font-size: var(--font-size-xs); color: var(--text-muted); margin-top: var(--space-xs);">
+                    Detalhes técnicos, especificações ou outras informações relevantes
+                </div>
+            </div>
+        </div>
+        
+        <!-- Form Actions -->
+        <div style="display: flex; gap: var(--space-md); justify-content: flex-end; margin-top: var(--space-2xl);">
+            <a href="/produtos" class="neu-btn">
+                ❌ Cancelar
+            </a>
+            <button type="submit" class="neu-btn neu-btn-primary neu-btn-lg">
+                <%= produto ? '💾 Atualizar Produto' : '➕ Cadastrar Produto' %>
+            </button>
+        </div>
+    </form>
+</div>
+
+<style>
+    .form-label {
+        display: block;
+        color: var(--text-secondary);
+        font-weight: 500;
+        margin-bottom: var(--space-sm);
+        font-size: var(--font-size-sm);
+    }
+    
+    .form-group {
+        margin-bottom: var(--space-lg);
+    }
+    
+    .required::after {
+        content: ' *';
+        color: var(--accent-danger);
+    }
+</style>
+
+<script>
+    // Form validation and enhancements
+    document.getElementById('productForm').addEventListener('submit', function(e) {
+        const codigo = document.getElementById('codigo').value.trim();
+        const descricao = document.getElementById('descricao').value.trim();
+        
+        if (!codigo || !descricao) {
+            e.preventDefault();
+            window.almoxarifadoApp.showAlert('Código e descrição são obrigatórios', 'danger');
+            return false;
+        }
+        
+        // Validate stock levels
+        const minimo = parseInt(document.getElementById('estoque_minimo').value) || 0;
+        const maximo = parseInt(document.getElementById('estoque_maximo').value) || 0;
+        
+        if (maximo > 0 && minimo > maximo) {
+            e.preventDefault();
+            window.almoxarifadoApp.showAlert('Estoque mínimo não pode ser maior que o máximo', 'danger');
+            return false;
+        }
+    });
+    
+    // Auto-uppercase for product code
+    document.getElementById('codigo').addEventListener('input', function() {
+        this.value = this.value.toUpperCase().replace(/[^A-Z0-9-_]/g, '');
+    });
+    
+    // Format price input
+    document.getElementById('preco_custo').addEventListener('input', function() {
+        let value = this.value.replace(/[^\d.,]/g, '');
+        value = value.replace(',', '.');
+        this.value = value;
+    });
+    
+    // Auto-generate code based on description (for new products only)
+    <% if (!produto) { %>
+    document.getElementById('descricao').addEventListener('blur', function() {
+        const codigo = document.getElementById('codigo');
+        if (!codigo.value.trim() && this.value.trim()) {
+            // Generate simple code from description
+            let generatedCode = this.value.trim()
+                .toUpperCase()
+                .replace(/[^A-Z0-9\s]/g, '')
+                .split(' ')
+                .slice(0, 2)
+                .map(word => word.substring(0, 4))
+                .join('');
+                
+            if (generatedCode.length > 0) {
+                codigo.value = generatedCode + '001';
+            }
+        }
+    });
+    <% } %>
+    
+    // Character counter for description
+    const descricaoInput = document.getElementById('descricao');
+    const maxLength = descricaoInput.getAttribute('maxlength');
+    
+    function updateCharCounter() {
+        const current = descricaoInput.value.length;
+        const remaining = maxLength - current;
+        
+        let counter = descricaoInput.parentNode.querySelector('.char-counter');
+        if (!counter) {
+            counter = document.createElement('div');
+            counter.className = 'char-counter';
+            counter.style.cssText = 'font-size: var(--font-size-xs); color: var(--text-muted); text-align: right; margin-top: var(--space-xs);';
+            descricaoInput.parentNode.appendChild(counter);
+        }
+        
+        counter.textContent = `${current}/${maxLength} caracteres`;
+        counter.style.color = remaining < 20 ? 'var(--accent-warning)' : 'var(--text-muted)';
+    }
+    
+    descricaoInput.addEventListener('input', updateCharCounter);
+    updateCharCounter();
+</script>

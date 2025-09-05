@@ -1,0 +1,335 @@
+<!-- Product Details Page -->
+<div class="produto-details-container">
+    <!-- Page Header -->
+    <div class="neu-header" style="margin-bottom: var(--space-xl);">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="flex: 1;">
+                <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-sm);">
+                    <h1 style="font-size: var(--font-size-3xl); font-weight: 700; color: var(--text-primary);">
+                        📦 <%= produto.descricao %>
+                    </h1>
+                    <% if (!produto.ativo) { %>
+                        <span class="neu-badge neu-badge-danger">Inativo</span>
+                    <% } %>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--space-lg); color: var(--text-secondary); font-size: var(--font-size-sm);">
+                    <div>
+                        <strong>Código:</strong> <%= produto.codigo %>
+                    </div>
+                    <% if (produto.codigo_barras) { %>
+                        <div>
+                            <strong>Código de Barras:</strong> <%= produto.codigo_barras %>
+                        </div>
+                    <% } %>
+                    <% if (produto.grupo_nome) { %>
+                        <div>
+                            <strong>Grupo:</strong> <%= produto.grupo_nome %>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+            <div style="display: flex; gap: var(--space-md); align-items: center;">
+                <a href="/produtos/<%= produto.id %>/editar" class="neu-btn neu-btn-primary">
+                    ✏️ Editar
+                </a>
+                <a href="/produtos" class="neu-btn">
+                    ← Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid-3" style="align-items: start; margin-bottom: var(--space-2xl);">
+        <!-- Stock Information -->
+        <div class="neu-card">
+            <h2 style="font-size: var(--font-size-xl); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-lg);">
+                📊 Informações de Estoque
+            </h2>
+            
+            <div class="stock-summary" style="margin-bottom: var(--space-lg);">
+                <div style="text-align: center; padding: var(--space-lg);">
+                    <div style="font-size: var(--font-size-4xl); font-weight: 700; color: var(--accent-primary); margin-bottom: var(--space-sm);">
+                        <%= produto.estoque_atual %>
+                    </div>
+                    <div style="color: var(--text-secondary); font-size: var(--font-size-sm); margin-bottom: var(--space-xs);">
+                        Estoque Total
+                    </div>
+                    <div class="neu-badge">
+                        <%= produto.unidade %>
+                    </div>
+                </div>
+                
+                <% if (produto.estoque_minimo > 0 && produto.estoque_atual <= produto.estoque_minimo) { %>
+                    <div class="neu-alert neu-alert-warning">
+                        ⚠️ Estoque abaixo do mínimo recomendado
+                    </div>
+                <% } %>
+            </div>
+            
+            <div class="stock-levels" style="margin-bottom: var(--space-lg);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
+                    <span style="color: var(--text-muted); font-size: var(--font-size-sm);">Estoque Mínimo</span>
+                    <strong><%= produto.estoque_minimo %> <%= produto.unidade %></strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
+                    <span style="color: var(--text-muted); font-size: var(--font-size-sm);">Estoque Máximo</span>
+                    <strong><%= produto.estoque_maximo %> <%= produto.unidade %></strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--text-muted); font-size: var(--font-size-sm);">Estoque Requisitado</span>
+                    <strong><%= produto.estoque_requisitado %> <%= produto.unidade %></strong>
+                </div>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+                <a href="/estoque/entrada?produto=<%= produto.id %>" class="neu-btn neu-btn-success">
+                    📦 Registrar Entrada
+                </a>
+                <a href="/estoque/saida?produto=<%= produto.id %>" class="neu-btn neu-btn-warning">
+                    📤 Registrar Saída
+                </a>
+                <a href="/estoque/ajuste?produto=<%= produto.id %>" class="neu-btn">
+                    ⚖️ Ajustar Estoque
+                </a>
+            </div>
+        </div>
+
+        <!-- Product Information -->
+        <div class="neu-card">
+            <h2 style="font-size: var(--font-size-xl); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-lg);">
+                📋 Detalhes do Produto
+            </h2>
+            
+            <div class="product-details">
+                <div class="detail-item" style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-sm) 0; border-bottom: 1px solid var(--bg-darker);">
+                    <span style="color: var(--text-muted); font-size: var(--font-size-sm);">Código</span>
+                    <strong style="font-family: monospace;"><%= produto.codigo %></strong>
+                </div>
+                
+                <div class="detail-item" style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-sm) 0; border-bottom: 1px solid var(--bg-darker);">
+                    <span style="color: var(--text-muted); font-size: var(--font-size-sm);">Unidade</span>
+                    <span class="neu-badge"><%= produto.unidade %></span>
+                </div>
+                
+                <% if (produto.grupo_nome) { %>
+                    <div class="detail-item" style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-sm) 0; border-bottom: 1px solid var(--bg-darker);">
+                        <span style="color: var(--text-muted); font-size: var(--font-size-sm);">Grupo</span>
+                        <span class="neu-badge neu-badge-info"><%= produto.grupo_nome %></span>
+                    </div>
+                <% } %>
+                
+                <% if (produto.codigo_barras) { %>
+                    <div class="detail-item" style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-sm) 0; border-bottom: 1px solid var(--bg-darker);">
+                        <span style="color: var(--text-muted); font-size: var(--font-size-sm);">Código de Barras</span>
+                        <strong style="font-family: monospace; font-size: var(--font-size-sm);"><%= produto.codigo_barras %></strong>
+                    </div>
+                <% } %>
+                
+                <% if (produto.preco_custo > 0) { %>
+                    <div class="detail-item" style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-sm) 0; border-bottom: 1px solid var(--bg-darker);">
+                        <span style="color: var(--text-muted); font-size: var(--font-size-sm);">Preço de Custo</span>
+                        <strong>R$ <%= parseFloat(produto.preco_custo).toFixed(2).replace('.', ',') %></strong>
+                    </div>
+                <% } %>
+                
+                <div class="detail-item" style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-sm) 0; border-bottom: 1px solid var(--bg-darker);">
+                    <span style="color: var(--text-muted); font-size: var(--font-size-sm);">Status</span>
+                    <% if (produto.ativo) { %>
+                        <span class="neu-badge neu-badge-success">Ativo</span>
+                    <% } else { %>
+                        <span class="neu-badge neu-badge-danger">Inativo</span>
+                    <% } %>
+                </div>
+                
+                <div class="detail-item" style="display: flex; justify-content: space-between; align-items: center; padding: var(--space-sm) 0;">
+                    <span style="color: var(--text-muted); font-size: var(--font-size-sm);">Cadastrado em</span>
+                    <span style="font-size: var(--font-size-sm);">
+                        <%= new Date(produto.created_at).toLocaleDateString('pt-BR') %>
+                    </span>
+                </div>
+            </div>
+            
+            <% if (produto.observacoes) { %>
+                <div style="margin-top: var(--space-lg); padding-top: var(--space-lg); border-top: 1px solid var(--bg-darker);">
+                    <h3 style="color: var(--text-secondary); font-size: var(--font-size-sm); margin-bottom: var(--space-sm); text-transform: uppercase; letter-spacing: 0.5px;">
+                        Observações
+                    </h3>
+                    <p style="color: var(--text-primary); line-height: 1.6;">
+                        <%= produto.observacoes %>
+                    </p>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="neu-card">
+            <h2 style="font-size: var(--font-size-xl); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-lg);">
+                ⚡ Ações Rápidas
+            </h2>
+            
+            <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+                <a href="/transferencias/nova?produto=<%= produto.id %>" class="neu-btn">
+                    🔄 Nova Transferência
+                </a>
+                <a href="/emprestimos/novo?produto=<%= produto.id %>" class="neu-btn">
+                    🤝 Novo Empréstimo
+                </a>
+                <a href="/relatorios/produto/<%= produto.id %>" class="neu-btn">
+                    📊 Relatório do Produto
+                </a>
+                
+                <hr style="border: none; height: 1px; background: var(--bg-darker); margin: var(--space-md) 0;">
+                
+                <button class="neu-btn neu-btn-sm" onclick="copyToClipboard('<%= produto.codigo %>')">
+                    📋 Copiar Código
+                </button>
+                <button class="neu-btn neu-btn-sm" onclick="printPage()">
+                    🖨️ Imprimir
+                </button>
+                
+                <% if (user.perfil === 'admin') { %>
+                    <hr style="border: none; height: 1px; background: var(--bg-darker); margin: var(--space-md) 0;">
+                    <form method="POST" action="/produtos/<%= produto.id %>/toggle" style="display: inline;" 
+                          onsubmit="return confirmAction('Confirma alterar o status deste produto?', () => this.submit())">
+                        <input type="hidden" name="_method" value="PATCH">
+                        <button type="submit" class="neu-btn neu-btn-sm <%= produto.ativo ? 'neu-btn-warning' : 'neu-btn-success' %>" style="width: 100%;">
+                            <%= produto.ativo ? '🔒 Desativar' : '🔓 Ativar' %>
+                        </button>
+                    </form>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stock by Location -->
+    <% if (estoques && estoques.length > 0) { %>
+        <div class="neu-card" style="margin-bottom: var(--space-2xl);">
+            <h2 style="font-size: var(--font-size-xl); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-lg);">
+                📍 Estoque por Local
+            </h2>
+            
+            <div class="neu-table-container">
+                <table class="neu-table">
+                    <thead>
+                        <tr>
+                            <th>Local</th>
+                            <th>Código</th>
+                            <th>Quantidade</th>
+                            <th>Reservado</th>
+                            <th>Disponível</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% estoques.forEach(estoque => { %>
+                            <tr>
+                                <td><%= estoque.local_nome %></td>
+                                <td>
+                                    <span class="neu-badge"><%= estoque.local_codigo %></span>
+                                </td>
+                                <td><strong><%= estoque.quantidade %></strong></td>
+                                <td>
+                                    <% if (estoque.quantidade_reservada > 0) { %>
+                                        <span class="text-warning"><%= estoque.quantidade_reservada %></span>
+                                    <% } else { %>
+                                        0
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <strong><%= estoque.quantidade - (estoque.quantidade_reservada || 0) %></strong>
+                                </td>
+                                <td>
+                                    <a href="/transferencias/nova?produto=<%= produto.id %>&origem=<%= estoque.local_id %>" 
+                                       class="neu-btn neu-btn-sm" data-tooltip="Transferir deste local">
+                                        🔄
+                                    </a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    <% } %>
+
+    <!-- Recent Movements -->
+    <div class="neu-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-lg);">
+            <h2 style="font-size: var(--font-size-xl); font-weight: 600; color: var(--text-primary);">
+                📈 Movimentações Recentes
+            </h2>
+            <a href="/estoque/movimentacoes?produto=<%= produto.id %>" class="neu-btn neu-btn-sm">
+                Ver Todas
+            </a>
+        </div>
+        
+        <% if (movimentacoes && movimentacoes.length > 0) { %>
+            <div class="neu-table-container">
+                <table class="neu-table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Tipo</th>
+                            <th>Quantidade</th>
+                            <th>Local</th>
+                            <th>Usuário</th>
+                            <th>Referência</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% movimentacoes.forEach(mov => { %>
+                            <tr>
+                                <td>
+                                    <%= new Date(mov.data_movimentacao).toLocaleDateString('pt-BR') %>
+                                    <div style="font-size: var(--font-size-xs); color: var(--text-muted);">
+                                        <%= new Date(mov.data_movimentacao).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) %>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="neu-badge neu-badge-<%= mov.tipo === 'entrada' ? 'success' : mov.tipo === 'saida' ? 'warning' : 'info' %>">
+                                        <%= mov.tipo.toUpperCase() %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <strong class="<%= mov.quantidade > 0 ? 'text-success' : 'text-warning' %>">
+                                        <%= mov.quantidade > 0 ? '+' : '' %><%= mov.quantidade %>
+                                    </strong>
+                                </td>
+                                <td>
+                                    <%= mov.local_nome || '-' %>
+                                </td>
+                                <td>
+                                    <%= mov.usuario_nome || 'Sistema' %>
+                                </td>
+                                <td>
+                                    <% if (mov.referencia) { %>
+                                        <span style="font-family: monospace; font-size: var(--font-size-xs);">
+                                            <%= mov.referencia %>
+                                        </span>
+                                    <% } else { %>
+                                        -
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="empty-state" style="text-align: center; padding: var(--space-2xl); color: var(--text-muted);">
+                <div style="font-size: var(--font-size-4xl); margin-bottom: var(--space-md);">📊</div>
+                <div>Nenhuma movimentação registrada</div>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<script>
+    function confirmAction(message, callback) {
+        if (confirm(message)) {
+            callback();
+        }
+        return false;
+    }
+</script>

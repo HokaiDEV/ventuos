@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página não encontrada - Sistema de Almoxarifado</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/neumorphic.css">
+</head>
+<body>
+    <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg-primary);">
+        <div class="neu-card" style="text-align: center; max-width: 500px;">
+            <div style="font-size: 6rem; margin-bottom: var(--space-lg);">🔍</div>
+            <h1 style="font-size: var(--font-size-3xl); font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-md);">
+                Página não encontrada
+            </h1>
+            <p style="color: var(--text-secondary); margin-bottom: var(--space-xl); line-height: 1.6;">
+                A página que você está procurando não existe ou foi movida para outro local.
+            </p>
+            <div style="display: flex; gap: var(--space-md); justify-content: center; flex-wrap: wrap;">
+                <a href="/dashboard" class="neu-btn neu-btn-primary">
+                    🏠 Ir para o Dashboard
+                </a>
+                <button onclick="history.back()" class="neu-btn">
+                    ← Voltar
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

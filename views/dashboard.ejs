@@ -1,0 +1,381 @@
+<!-- Dashboard - Sistema de Almoxarifado -->
+<div class="dashboard-container">
+    <!-- Page Header -->
+    <div class="neu-header" style="margin-bottom: var(--space-xl);">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <h1 style="font-size: var(--font-size-3xl); font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-sm);">
+                    📊 Dashboard
+                </h1>
+                <p style="color: var(--text-secondary); font-size: var(--font-size-base);">
+                    Visão geral do sistema de almoxarifado
+                </p>
+            </div>
+            <div style="display: flex; gap: var(--space-md); align-items: center;">
+                <label style="display: flex; align-items: center; gap: var(--space-sm); color: var(--text-secondary); font-size: var(--font-size-sm);">
+                    <input type="checkbox" id="autoRefresh" style="margin: 0;">
+                    Auto-atualizar
+                </label>
+                <button class="neu-btn neu-btn-primary" onclick="refreshDashboard()">
+                    🔄 Atualizar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="grid-4" style="margin-bottom: var(--space-2xl);">
+        <div class="neu-stat-card">
+            <div class="neu-stat-number" data-stat="produtos">
+                <%= stats.produtos %>
+            </div>
+            <div class="neu-stat-label">Produtos Cadastrados</div>
+            <div style="margin-top: var(--space-sm);">
+                <a href="/produtos" class="neu-btn neu-btn-sm">Ver Produtos</a>
+            </div>
+        </div>
+        
+        <div class="neu-stat-card">
+            <div class="neu-stat-number text-warning" data-stat="estoquesBaixos">
+                <%= stats.estoquesBaixos %>
+            </div>
+            <div class="neu-stat-label">Estoques Baixos</div>
+            <div style="margin-top: var(--space-sm);">
+                <a href="/estoque?filtro=baixo" class="neu-btn neu-btn-sm neu-btn-warning">Ver Alertas</a>
+            </div>
+        </div>
+        
+        <div class="neu-stat-card">
+            <div class="neu-stat-number text-success" data-stat="emprestimosAbertos">
+                <%= stats.emprestimosAbertos %>
+            </div>
+            <div class="neu-stat-label">Empréstimos Abertos</div>
+            <div style="margin-top: var(--space-sm);">
+                <a href="/emprestimos?status=aberto" class="neu-btn neu-btn-sm neu-btn-success">Gerenciar</a>
+            </div>
+        </div>
+        
+        <div class="neu-stat-card">
+            <div class="neu-stat-number text-info" data-stat="transferenciasPendentes">
+                <%= stats.transferenciasPendentes %>
+            </div>
+            <div class="neu-stat-label">Transferências Pendentes</div>
+            <div style="margin-top: var(--space-sm);">
+                <a href="/transferencias?status=pendente" class="neu-btn neu-btn-sm">Aprovar</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid-2" style="align-items: start;">
+        <!-- Recent Movements -->
+        <div class="neu-card">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-lg);">
+                <h2 style="font-size: var(--font-size-xl); font-weight: 600; color: var(--text-primary);">
+                    📈 Movimentações Recentes
+                </h2>
+                <a href="/estoque/movimentacoes" class="neu-btn neu-btn-sm">Ver Todas</a>
+            </div>
+            
+            <div class="movements-list">
+                <% if (movimentosRecentes && movimentosRecentes.length > 0) { %>
+                    <% movimentosRecentes.forEach((movimento, index) => { %>
+                        <div class="movement-item" style="
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            padding: var(--space-md);
+                            border-radius: var(--radius-md);
+                            margin-bottom: var(--space-sm);
+                            background: var(--bg-secondary);
+                            box-shadow: inset 2px 2px 4px var(--shadow-inset-dark), inset -2px -2px 4px var(--shadow-inset-light);
+                            animation: slideIn 0.3s ease-out <%= index * 0.1 %>s both;
+                        ">
+                            <div style="flex: 1;">
+                                <div style="font-weight: 500; color: var(--text-primary); margin-bottom: var(--space-xs);">
+                                    <%= movimento.produto_nome %>
+                                </div>
+                                <div style="font-size: var(--font-size-xs); color: var(--text-muted);">
+                                    <%= movimento.usuario_nome || 'Sistema' %> • 
+                                    <span data-timestamp="<%= movimento.data_movimentacao %>">
+                                        <%= new Date(movimento.data_movimentacao).toLocaleDateString('pt-BR') %>
+                                    </span>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="neu-badge neu-badge-<%= movimento.tipo === 'entrada' ? 'success' : movimento.tipo === 'saida' ? 'warning' : 'info' %>">
+                                    <%= movimento.tipo.toUpperCase() %>
+                                </div>
+                                <div style="font-weight: 600; color: var(--text-primary); margin-top: var(--space-xs);">
+                                    <%= movimento.quantidade > 0 ? '+' : '' %><%= movimento.quantidade %>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <div class="empty-state" style="
+                        text-align: center;
+                        padding: var(--space-2xl);
+                        color: var(--text-muted);
+                    ">
+                        <div style="font-size: var(--font-size-4xl); margin-bottom: var(--space-md);">📊</div>
+                        <div>Nenhuma movimentação recente</div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="neu-card">
+            <h2 style="font-size: var(--font-size-xl); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-lg);">
+                ⚡ Ações Rápidas
+            </h2>
+            
+            <div class="quick-actions" style="display: flex; flex-direction: column; gap: var(--space-md);">
+                <a href="/produtos/novo" class="neu-btn neu-btn-primary" style="justify-content: flex-start;">
+                    ➕ Cadastrar Produto
+                </a>
+                
+                <a href="/estoque/entrada" class="neu-btn neu-btn-success" style="justify-content: flex-start;">
+                    📦 Registrar Entrada
+                </a>
+                
+                <a href="/estoque/saida" class="neu-btn neu-btn-warning" style="justify-content: flex-start;">
+                    📤 Registrar Saída
+                </a>
+                
+                <a href="/transferencias/nova" class="neu-btn" style="justify-content: flex-start;">
+                    🔄 Nova Transferência
+                </a>
+                
+                <a href="/emprestimos/novo" class="neu-btn" style="justify-content: flex-start;">
+                    🤝 Novo Empréstimo
+                </a>
+                
+                <hr style="border: none; height: 1px; background: var(--bg-darker); margin: var(--space-md) 0;">
+                
+                <a href="/relatorios/estoque" class="neu-btn neu-btn-sm" style="justify-content: flex-start;">
+                    📋 Relatório de Estoque
+                </a>
+                
+                <a href="/relatorios/movimentacoes" class="neu-btn neu-btn-sm" style="justify-content: flex-start;">
+                    📈 Relatório de Movimentações
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Widgets -->
+    <div class="grid-3" style="margin-top: var(--space-2xl);">
+        <!-- Low Stock Alert -->
+        <div class="neu-card-flat">
+            <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);">
+                <div style="font-size: var(--font-size-2xl);">⚠️</div>
+                <div>
+                    <h3 style="font-size: var(--font-size-lg); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-xs);">
+                        Alertas de Estoque
+                    </h3>
+                    <p style="color: var(--text-secondary); font-size: var(--font-size-sm);">
+                        Produtos com estoque baixo
+                    </p>
+                </div>
+            </div>
+            
+            <div id="lowStockList" style="max-height: 200px; overflow-y: auto;">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Pending Loans -->
+        <div class="neu-card-flat">
+            <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);">
+                <div style="font-size: var(--font-size-2xl);">🕐</div>
+                <div>
+                    <h3 style="font-size: var(--font-size-lg); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-xs);">
+                        Empréstimos Vencendo
+                    </h3>
+                    <p style="color: var(--text-secondary); font-size: var(--font-size-sm);">
+                        Próximos ao vencimento
+                    </p>
+                </div>
+            </div>
+            
+            <div id="pendingLoansList" style="max-height: 200px; overflow-y: auto;">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- System Status -->
+        <div class="neu-card-flat">
+            <div style="display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg);">
+                <div style="font-size: var(--font-size-2xl);">💚</div>
+                <div>
+                    <h3 style="font-size: var(--font-size-lg); font-weight: 600; color: var(--text-primary); margin-bottom: var(--space-xs);">
+                        Status do Sistema
+                    </h3>
+                    <p style="color: var(--text-secondary); font-size: var(--font-size-sm);">
+                        Informações gerais
+                    </p>
+                </div>
+            </div>
+            
+            <div class="system-status">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
+                    <span style="font-size: var(--font-size-sm); color: var(--text-muted);">Servidor</span>
+                    <span class="neu-badge neu-badge-success">Online</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
+                    <span style="font-size: var(--font-size-sm); color: var(--text-muted);">Banco de Dados</span>
+                    <span class="neu-badge neu-badge-success">Conectado</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-sm);">
+                    <span style="font-size: var(--font-size-sm); color: var(--text-muted);">Último Backup</span>
+                    <span style="font-size: var(--font-size-xs); color: var(--text-secondary);">
+                        Hoje, 02:00
+                    </span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: var(--font-size-sm); color: var(--text-muted);">Usuários Online</span>
+                    <span class="neu-badge neu-badge-info">1</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Dashboard-specific JavaScript
+    function refreshDashboard() {
+        const refreshBtn = event.target;
+        refreshBtn.disabled = true;
+        refreshBtn.innerHTML = '<span class="neu-loading"></span> Atualizando...';
+        
+        // Simulate API call
+        setTimeout(() => {
+            location.reload();
+        }, 1000);
+    }
+    
+    // Load low stock items
+    async function loadLowStockItems() {
+        try {
+            const response = await fetch('/api/estoque/baixo');
+            const items = await response.json();
+            
+            const container = document.getElementById('lowStockList');
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: var(--text-muted); font-size: var(--font-size-sm); padding: var(--space-md);">
+                        ✅ Todos os estoques estão adequados
+                    </div>
+                `;
+            } else {
+                container.innerHTML = items.map(item => `
+                    <div style="
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding: var(--space-sm);
+                        margin-bottom: var(--space-xs);
+                        background: var(--bg-primary);
+                        border-radius: var(--radius-sm);
+                        font-size: var(--font-size-xs);
+                    ">
+                        <div>
+                            <div style="font-weight: 500; color: var(--text-primary);">${item.descricao}</div>
+                            <div style="color: var(--text-muted);">Estoque: ${item.estoque_atual}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="color: var(--accent-warning); font-weight: 600;">Mín: ${item.estoque_minimo}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        } catch (error) {
+            console.error('Erro ao carregar itens com estoque baixo:', error);
+            document.getElementById('lowStockList').innerHTML = `
+                <div style="text-align: center; color: var(--accent-danger); font-size: var(--font-size-sm); padding: var(--space-md);">
+                    Erro ao carregar dados
+                </div>
+            `;
+        }
+    }
+    
+    // Load pending loans
+    async function loadPendingLoans() {
+        try {
+            const response = await fetch('/api/emprestimos/vencendo');
+            const loans = await response.json();
+            
+            const container = document.getElementById('pendingLoansList');
+            if (loans.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: var(--text-muted); font-size: var(--font-size-sm); padding: var(--space-md);">
+                        ✅ Nenhum empréstimo vencendo
+                    </div>
+                `;
+            } else {
+                container.innerHTML = loans.map(loan => `
+                    <div style="
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding: var(--space-sm);
+                        margin-bottom: var(--space-xs);
+                        background: var(--bg-primary);
+                        border-radius: var(--radius-sm);
+                        font-size: var(--font-size-xs);
+                    ">
+                        <div>
+                            <div style="font-weight: 500; color: var(--text-primary);">${loan.colaborador_nome}</div>
+                            <div style="color: var(--text-muted);">${loan.produto_nome}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="color: var(--accent-warning); font-weight: 600;">
+                                ${new Date(loan.prazo_devolucao).toLocaleDateString('pt-BR')}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        } catch (error) {
+            console.error('Erro ao carregar empréstimos pendentes:', error);
+            document.getElementById('pendingLoansList').innerHTML = `
+                <div style="text-align: center; color: var(--accent-danger); font-size: var(--font-size-sm); padding: var(--space-md);">
+                    Erro ao carregar dados
+                </div>
+            `;
+        }
+    }
+    
+    // Initialize dashboard
+    document.addEventListener('DOMContentLoaded', function() {
+        loadLowStockItems();
+        loadPendingLoans();
+        
+        // Auto-refresh functionality
+        const autoRefreshCheckbox = document.getElementById('autoRefresh');
+        if (autoRefreshCheckbox) {
+            autoRefreshCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    window.dashboardInterval = setInterval(() => {
+                        loadLowStockItems();
+                        loadPendingLoans();
+                        window.almoxarifadoApp.refreshDashboardData();
+                    }, 30000); // 30 seconds
+                } else {
+                    if (window.dashboardInterval) {
+                        clearInterval(window.dashboardInterval);
+                    }
+                }
+            });
+        }
+    });
+    
+    // Cleanup interval on page unload
+    window.addEventListener('beforeunload', function() {
+        if (window.dashboardInterval) {
+            clearInterval(window.dashboardInterval);
+        }
+    });
+</script>

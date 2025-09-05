@@ -1,0 +1,293 @@
+<!-- Products List Page -->
+<div class="produtos-container">
+    <!-- Page Header -->
+    <div class="neu-header" style="margin-bottom: var(--space-xl);">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+                <h1 style="font-size: var(--font-size-3xl); font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-sm);">
+                    📦 Produtos
+                </h1>
+                <p style="color: var(--text-secondary); font-size: var(--font-size-base);">
+                    Gerenciar cadastro de produtos e insumos
+                </p>
+            </div>
+            <div style="display: flex; gap: var(--space-md);">
+                <a href="/produtos/novo" class="neu-btn neu-btn-primary">
+                    ➕ Novo Produto
+                </a>
+                <button class="neu-btn" onclick="exportTable('produtosTable', 'produtos.csv')">
+                    📊 Exportar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="neu-card" style="margin-bottom: var(--space-xl);">
+        <form method="GET" action="/produtos" style="display: flex; gap: var(--space-md); align-items: end; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 200px;">
+                <label class="form-label">Buscar</label>
+                <input 
+                    type="text" 
+                    name="search" 
+                    class="neu-input" 
+                    placeholder="Código ou descrição..."
+                    value="<%= filters.search || '' %>"
+                >
+            </div>
+            
+            <div style="min-width: 150px;">
+                <label class="form-label">Grupo</label>
+                <select name="grupo" class="neu-select">
+                    <option value="">Todos os grupos</option>
+                    <% grupos.forEach(grupo => { %>
+                        <option value="<%= grupo.id %>" <%= filters.grupo == grupo.id ? 'selected' : '' %>>
+                            <%= grupo.nome %>
+                        </option>
+                    <% }) %>
+                </select>
+            </div>
+            
+            <div style="min-width: 120px;">
+                <label class="form-label">Status</label>
+                <select name="ativo" class="neu-select">
+                    <option value="1" <%= filters.ativo === '1' ? 'selected' : '' %>>Ativos</option>
+                    <option value="0" <%= filters.ativo === '0' ? 'selected' : '' %>>Inativos</option>
+                    <option value="all" <%= filters.ativo === 'all' ? 'selected' : '' %>>Todos</option>
+                </select>
+            </div>
+            
+            <div style="display: flex; gap: var(--space-sm);">
+                <button type="submit" class="neu-btn neu-btn-primary">
+                    🔍 Filtrar
+                </button>
+                <a href="/produtos" class="neu-btn">
+                    🗑️ Limpar
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Products Table -->
+    <div class="neu-table-container">
+        <% if (produtos.length === 0) { %>
+            <div class="empty-state" style="text-align: center; padding: var(--space-2xl); color: var(--text-muted);">
+                <div style="font-size: var(--font-size-4xl); margin-bottom: var(--space-lg);">📦</div>
+                <h3 style="margin-bottom: var(--space-md);">Nenhum produto encontrado</h3>
+                <p style="margin-bottom: var(--space-lg);">
+                    <% if (filters.search || filters.grupo || filters.ativo !== '1') { %>
+                        Tente ajustar os filtros ou <a href="/produtos">limpar a busca</a>
+                    <% } else { %>
+                        Comece cadastrando seu primeiro produto
+                    <% } %>
+                </p>
+                <a href="/produtos/novo" class="neu-btn neu-btn-primary">
+                    ➕ Cadastrar Primeiro Produto
+                </a>
+            </div>
+        <% } else { %>
+            <table class="neu-table" id="produtosTable">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Descrição</th>
+                        <th>Grupo</th>
+                        <th>Unidade</th>
+                        <th>Estoque Atual</th>
+                        <th>Estoque Mín.</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% produtos.forEach(produto => { %>
+                        <tr class="fade-in">
+                            <td>
+                                <strong><%= produto.codigo %></strong>
+                                <% if (produto.codigo_barras) { %>
+                                    <div style="font-size: var(--font-size-xs); color: var(--text-muted);">
+                                        📊 <%= produto.codigo_barras %>
+                                    </div>
+                                <% } %>
+                            </td>
+                            <td>
+                                <div style="font-weight: 500;">
+                                    <%= produto.descricao %>
+                                </div>
+                                <% if (produto.observacoes) { %>
+                                    <div style="font-size: var(--font-size-xs); color: var(--text-muted); margin-top: var(--space-xs);">
+                                        <%= produto.observacoes.substring(0, 50) %><%= produto.observacoes.length > 50 ? '...' : '' %>
+                                    </div>
+                                <% } %>
+                            </td>
+                            <td>
+                                <% if (produto.grupo_nome) { %>
+                                    <span class="neu-badge neu-badge-info">
+                                        <%= produto.grupo_nome %>
+                                    </span>
+                                <% } else { %>
+                                    <span style="color: var(--text-muted); font-size: var(--font-size-sm);">
+                                        Sem grupo
+                                    </span>
+                                <% } %>
+                            </td>
+                            <td>
+                                <span class="neu-badge">
+                                    <%= produto.unidade %>
+                                </span>
+                            </td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                                    <strong><%= produto.estoque_atual %></strong>
+                                    <% if (produto.estoque_minimo > 0 && produto.estoque_atual <= produto.estoque_minimo) { %>
+                                        <span class="neu-badge neu-badge-warning" data-tooltip="Estoque baixo">⚠️</span>
+                                    <% } %>
+                                </div>
+                            </td>
+                            <td>
+                                <%= produto.estoque_minimo %>
+                            </td>
+                            <td>
+                                <% if (produto.ativo) { %>
+                                    <span class="neu-badge neu-badge-success">Ativo</span>
+                                <% } else { %>
+                                    <span class="neu-badge neu-badge-danger">Inativo</span>
+                                <% } %>
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: var(--space-xs);">
+                                    <a href="/produtos/<%= produto.id %>" class="neu-btn neu-btn-sm" data-tooltip="Ver detalhes">
+                                        👁️
+                                    </a>
+                                    <a href="/produtos/<%= produto.id %>/editar" class="neu-btn neu-btn-sm" data-tooltip="Editar">
+                                        ✏️
+                                    </a>
+                                    <% if (user.perfil === 'admin') { %>
+                                        <form method="POST" action="/produtos/<%= produto.id %>/toggle" style="display: inline;" 
+                                              onsubmit="return confirmAction('Confirma alterar o status deste produto?', () => this.submit())">
+                                            <input type="hidden" name="_method" value="PATCH">
+                                            <button type="submit" class="neu-btn neu-btn-sm <%= produto.ativo ? 'neu-btn-warning' : 'neu-btn-success' %>" 
+                                                    data-tooltip="<%= produto.ativo ? 'Desativar' : 'Ativar' %>">
+                                                <%= produto.ativo ? '🔒' : '🔓' %>
+                                            </button>
+                                        </form>
+                                    <% } %>
+                                </div>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } %>
+    </div>
+
+    <!-- Summary Card -->
+    <% if (produtos.length > 0) { %>
+        <div class="neu-card-flat" style="margin-top: var(--space-xl);">
+            <div class="grid-4">
+                <div class="text-center">
+                    <div class="neu-stat-number text-primary">
+                        <%= produtos.length %>
+                    </div>
+                    <div class="neu-stat-label">
+                        Total de Produtos
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="neu-stat-number text-success">
+                        <%= produtos.filter(p => p.ativo).length %>
+                    </div>
+                    <div class="neu-stat-label">
+                        Produtos Ativos
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="neu-stat-number text-warning">
+                        <%= produtos.filter(p => p.estoque_minimo > 0 && p.estoque_atual <= p.estoque_minimo).length %>
+                    </div>
+                    <div class="neu-stat-label">
+                        Estoque Baixo
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="neu-stat-number text-info">
+                        <%= produtos.reduce((sum, p) => sum + p.estoque_atual, 0) %>
+                    </div>
+                    <div class="neu-stat-label">
+                        Total em Estoque
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } %>
+</div>
+
+<!-- Flash Messages -->
+<% if (typeof success !== 'undefined' && success.length > 0) { %>
+    <script>
+        window.almoxarifadoApp.showAlert('<%= success %>', 'success');
+    </script>
+<% } %>
+
+<% if (typeof error !== 'undefined' && error.length > 0) { %>
+    <script>
+        window.almoxarifadoApp.showAlert('<%= error %>', 'danger');
+    </script>
+<% } %>
+
+<style>
+    .form-label {
+        display: block;
+        color: var(--text-secondary);
+        font-weight: 500;
+        margin-bottom: var(--space-sm);
+        font-size: var(--font-size-sm);
+    }
+    
+    .empty-state h3 {
+        color: var(--text-primary);
+        font-weight: 600;
+    }
+    
+    .empty-state p {
+        color: var(--text-secondary);
+    }
+    
+    .empty-state a {
+        color: var(--accent-primary);
+        text-decoration: none;
+    }
+    
+    .empty-state a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<script>
+    // Auto-submit form on select change
+    document.querySelectorAll('select[name="grupo"], select[name="ativo"]').forEach(select => {
+        select.addEventListener('change', function() {
+            this.form.submit();
+        });
+    });
+
+    // Live search with debounce
+    let searchTimeout;
+    const searchInput = document.querySelector('input[name="search"]');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                this.form.submit();
+            }, 500);
+        });
+    }
+
+    // Confirmation function for status toggle
+    function confirmAction(message, callback) {
+        if (confirm(message)) {
+            callback();
+        }
+        return false;
+    }
+</script>
